@@ -40,8 +40,8 @@ module.exports = {
         {
           locale: "default",
           commands: commandsPayload
-      }
-    ]
+        }
+      ]
     }, {
       headers: {
         "Content-Type": "application/json"
@@ -59,9 +59,8 @@ module.exports = {
   temp,
   prefix,
   admin: [
-"100087212564100",
-    ""
-],
+    "100087212564100" // Only one admin listed here
+  ],
   async sendMessage(senderId, message, pageAccessToken) {
     return await new Promise(async (resolve, reject) => {
       const sendMsg = await axios.post(`https://graph.facebook.com/v21.0/me/messages`,
@@ -86,20 +85,20 @@ module.exports = {
   },
   async publishPost(message, access_token) {
     return await new Promise(async (resolve, reject) => {
-    const res = await axios.post(`https://graph.facebook.com/v21.0/me/feed`,
-    {
-      message,
-      access_token
-    }, {
-      params: {
+      const res = await axios.post(`https://graph.facebook.com/v21.0/me/feed`,
+      {
+        message,
         access_token
-      },
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-    if (!res) reject();
-    resolve(res.data);
+      }, {
+        params: {
+          access_token
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      if (!res) reject();
+      resolve(res.data);
     });
   },
   introduction: `Hello, I am CHILLIBOT and I am your assistant.
@@ -109,4 +108,4 @@ Note: CHILLIBOT is highly recommended to use Messenger because some features won
 🤖 Created by Churchill Abing`,
   api_josh: "https://deku-rest-apis.ooguy.com",
   echavie: "https://echavie3.nethprojects.workers.dev"
-}
+};
