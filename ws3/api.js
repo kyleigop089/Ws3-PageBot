@@ -105,7 +105,7 @@ module.exports = {
   introduction: `Hello, I am CHILLIBOT and I am your assistant.
 Type ${prefix}help for available commands.
 
-Note: WieAI is highly recommended to use Messenger because some features won't work and limited.
+Note: CHILLIBOT is highly recommended to use Messenger because some features won't work and limited.
 🤖 Created by Churchill Abing`,
   api_josh: "https://deku-rest-apis.ooguy.com",
   echavie: "https://echavie3.nethprojects.workers.dev"
