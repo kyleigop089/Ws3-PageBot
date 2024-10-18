@@ -9,10 +9,8 @@ module.exports = {
     
     if (!prompt) return send(`Usage: ${api.prefix + name} [your input]`);
 
-    send("Please wait while I process your request...");
-
     try {
-      const res = await axios.get('https://betadash-api-swordslush.vercel.app/gpt-4-0613', {
+      const res = await axios.get('https://betadash-api-swordslush.vercel.app/gpt-4o-mini', {
         params: { ask: prompt }
       });
 
