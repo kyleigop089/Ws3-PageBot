@@ -5,7 +5,7 @@ const axios = require("axios");
 const cmdLoc = __dirname + "/commands";
 const temp = __dirname + "/temp";
 const fs = require("fs");
-const prefix = "/";
+const prefix = "!";
 const commands = [];
 const descriptions = [];
 module.exports = {
@@ -105,7 +105,7 @@ module.exports = {
 Type ${prefix}help for available commands.
 
 Note: WieAI is highly recommended to use Messenger because some features won't work and limited.
-🤖 Created by Churchill Abinf`,
+🤖 Created by Churchill Abing`,
   api_josh: "https://deku-rest-apis.ooguy.com",
   echavie: "https://echavie3.nethprojects.workers.dev"
 }
