@@ -1,30 +1,28 @@
 const axios = require("axios");
-const name = "ai" ;
+const name = "ai";
 
 module.exports = {
   name,
-  description: "Interact with ChatGPT-4o",
-  async run ({ api, event, send, args }){
+  description: "Generates an AI response based on your input",
+  async run({ api, send, args }) {
     const prompt = args.join(" ");
-    if (!prompt) return send(`Please enter your question! 
+    
+    if (!prompt) return send(`Usage: ${api.prefix + name} [your input]`);
 
-Example: ${api.prefix + name} what is love?`);
-    send("Please wait... 🔎");
+    send("Please wait while I process your request...");
+
     try {
-    const gpt = await axios.get(`${api.api_josh}/api/gpt-4o`, {
-      params: {
-        q: prompt,
-        uid: event.sender.id
-      }
-    });
-    if (!gpt || !gpt.data.status)
-    throw new Error();
-    send(`${gpt.data.result}
+      const res = await axios.get('https://betadash-api-swordslush.vercel.app/gpt-4-0613', {
+        params: { ask: prompt }
+      });
 
-🤖 WieAI by Neth Aceberos`);
-    } catch(err){
-      send(err.message || err);
-      return;
+      if (!res || !res.data || res.data.code !== 200) throw new Error("Invalid response from API");
+
+      const result = res.data.message;
+      send(result);
+
+    } catch (error) {
+      send("Error generating the response. Please try again or check your input.\n" + (error.message || error));
     }
   }
-}
+};
