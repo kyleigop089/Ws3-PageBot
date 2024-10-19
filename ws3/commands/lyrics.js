@@ -7,7 +7,7 @@ module.exports = {
   async run({ api, sendMessage, args }) {
     const songTitle = args.join(" ");
     
-    if (!songTitle) return sendMessage(`Usage: ${api.prefix + name} [song title]`);
+    if (!songTitle) return send(`Usage: ${api.prefix + name} [song title]`);
 
     try {
       const res = await axios.get(`https://markdevs69v2-679r.onrender.com/api/lyrics/song`, {
