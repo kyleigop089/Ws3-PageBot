@@ -16,12 +16,12 @@ module.exports = {
           type: "template",
           payload: {
             template_type: "button",
-            text: `🤖 | These are the commands on CHILLI BOT below.
+            text: `🤖 | These are the commands on Kyle's Bot below.
 🔎 | Click every command to see the usage.`,
             buttons: [
               {
                 type: "web_url",
-                url: "https://www.facebook.com/Churchill.Dev4100",
+                url: "https://www.facebook.com/profile.php?id=61566232924755",
                 title: "Contact Admin"
               }
             ]
