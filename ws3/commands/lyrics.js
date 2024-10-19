@@ -39,7 +39,7 @@ module.exports = {
       });
 
     } catch (error) {
-      sendMessage("Error retrieving lyrics. Please try again or check your input.\n" + (error.message || error));
+      send("Error retrieving lyrics. Please try again or check your input.\n" + (error.message || error));
     }
   }
 };
