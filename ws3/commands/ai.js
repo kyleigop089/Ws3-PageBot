@@ -17,10 +17,26 @@ module.exports = {
       if (!res || !res.data || res.data.code !== 200) throw new Error("Invalid response from API");
 
       const result = res.data.message;
-      send(result);
+      const maxMessageLength = 2000;
+      if (result.length > maxMessageLength) {
+        const messages = splitMessageIntoChunks(result, maxMessageLength);
+        for (const message of messages) {
+          send(message);
+        }
+      } else {
+        send(result);
+      }
 
     } catch (error) {
       send("Error generating the response. Please try again or check your input.\n" + (error.message || error));
     }
   }
 };
+
+function splitMessageIntoChunks(message, chunkSize) {
+  const chunks = [];
+  for (let i = 0; i < message.length; i += chunkSize) {
+    chunks.push(message.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
