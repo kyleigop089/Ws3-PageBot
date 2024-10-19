@@ -18,11 +18,13 @@ module.exports = {
 
       const result = res.data.message;
       const maxMessageLength = 2000;
+      const delayBetweenMessages = 1000; // Delay in milliseconds (1 second)
+
       if (result.length > maxMessageLength) {
         const messages = splitMessageIntoChunks(result, maxMessageLength);
-        for (const message of messages) {
-          send(message);
-        }
+        messages.forEach((message, index) => {
+          setTimeout(() => send(message), index * delayBetweenMessages);
+        });
       } else {
         send(result);
       }
