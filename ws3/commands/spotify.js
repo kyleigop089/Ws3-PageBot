@@ -1,7 +1,8 @@
 const axios = require("axios");
-const name = "spotify";
 const fs = require("fs");
 const path = require("path");
+
+const name = "spotify";
 
 module.exports = {
   name,
@@ -18,10 +19,9 @@ module.exports = {
 
       if (!res || !res.data || res.data.length === 0) throw new Error("No results found");
 
-      const { name, download, image } = res.data[0];
-      
-      // Download the MP3 file
-      const mp3Path = path.resolve(__dirname, `${name}.mp3`);
+      const { name: trackName, download, image } = res.data[0];
+
+      const mp3Path = path.resolve(__dirname, `${trackName}.mp3`);
       const writer = fs.createWriteStream(mp3Path);
 
       const response = await axios({
@@ -32,9 +32,18 @@ module.exports = {
 
       response.data.pipe(writer);
 
-      writer.on('finish', () => {
-        // Send the audio file as an attachment
-        send({
+      writer.on('finish', async () => {
+        await send({
+          attachment: {
+            type: "image",
+            payload: {
+              url: image
+            }
+          },
+          text: `Track: ${trackName}`
+        });
+
+        await send({
           attachment: {
             type: "audio",
             payload: {
