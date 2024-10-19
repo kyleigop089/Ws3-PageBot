@@ -30,17 +30,28 @@ const listenMessage = async (event, pageAccessToken) => {
   [command, ...args] = (message || "")
     .trim()
     .toLowerCase()
+    .startsWith(prefix.toLowerCase()) ?
+    (message || "")
+    .trim()
+    .substring(prefix.length)
+    .trim()
     .split(/\s+/)
-    .map(arg => arg.trim()),
+    .map(arg => arg.trim()) : [],
     admin = api.admin.some(id => id === senderID);
 
-  // Check if the message starts with the prefix
-  if (message.toLowerCase().startsWith(prefix.toLowerCase())) {
-    switch (command) {
-      case "prefix": {
-        return send(`Hello! My prefix is ${prefix}`);
+  switch (message.toLowerCase().trim()) {
+    case "prefix": {
+      return send(`Hello! My prefix is ${prefix}`);
+    }
+    default: {
+      if (!message) return;
+      if (["hi", "wie", "wieai", "wiegine", "get started"]
+        .some(text => text === message.toLowerCase().trim())) {
+         return getStarted(send);
       }
-      default: {
+
+      //command handling
+      if (message.toLowerCase().startsWith(prefix)) {
         if (api.commands.some(cmd => cmd === command)) {
           const commandJs = require(api.cmdLoc + `/${command}`);
           if (commandJs.admin && !admin) {
@@ -68,26 +79,14 @@ const listenMessage = async (event, pageAccessToken) => {
             quick_replies: [
               {
                 content_type: "text",
-                title: "/help",
+                title: "!help",
                 payload: "HELP"
               }
            ]
           });
         }
-      }
+      } else return;
     }
-  } else {
-    // If no prefix, send a message that a prefix is needed
-    return send({
-      text: `❌ The command requires a prefix! Use: ${prefix} before your command.`,
-      quick_replies: [
-        {
-          content_type: "text",
-          title: `${prefix}help`,
-          payload: "HELP"
-        }
-      ]
-    });
   }
 };
 
