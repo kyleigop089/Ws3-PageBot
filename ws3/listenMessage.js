@@ -15,17 +15,13 @@ const getStarted = async (send) => send({
           },
           {
             type: "postback",
-            title: "About",
-            payload: "ABOUT"
-          },
-          {
-            type: "postback",
             title: "Prefix",
             payload: "PREFIX"
           }
         ]
       }
 }});
+
 const listenMessage = async (event, pageAccessToken) => {
   const senderID = event.sender.id;
   const message = event.message.text;
@@ -34,30 +30,21 @@ const listenMessage = async (event, pageAccessToken) => {
   [command, ...args] = (message || "")
     .trim()
     .toLowerCase()
-    .startsWith(prefix.toLowerCase()) ?
-    (message || "")
-    .trim()
-    .substring(prefix.length)
-    .trim()
     .split(/\s+/)
-    .map(arg => arg.trim()) : [],
+    .map(arg => arg.trim()),
     admin = api.admin.some(id => id === senderID);
-    switch (message.toLowerCase().trim()) {
-    case "prefix": {
-      return send(`Hello! My prefix is ${prefix}`);
-    }
-    default: {
-      if (!message) return;
-      if (["hi", "wie", "wieai", "wiegine", "get started"]
-        .some(text => text === message.toLowerCase().trim())) {
-         return getStarted(send);
+
+  // Check if the message starts with the prefix
+  if (message.toLowerCase().startsWith(prefix.toLowerCase())) {
+    switch (command) {
+      case "prefix": {
+        return send(`Hello! My prefix is ${prefix}`);
       }
-      //command
-      if (message.toLowerCase().startsWith(prefix)) {
+      default: {
         if (api.commands.some(cmd => cmd === command)) {
           const commandJs = require(api.cmdLoc + `/${command}`);
-          if (commandJs.admin && !admin){
-          return send({
+          if (commandJs.admin && !admin) {
+            return send({
               text: `❌ Command ${command} is for admins only. Type or click (below) ${prefix}help to see available commands.`,
               quick_replies: [
                 {
@@ -83,21 +70,34 @@ const listenMessage = async (event, pageAccessToken) => {
                 content_type: "text",
                 title: "/help",
                 payload: "HELP"
-                //"image_url": "http://example.com/img/red.png"
               }
            ]
           });
         }
-      } else return;
+      }
     }
+  } else {
+    // If no prefix, send a message that a prefix is needed
+    return send({
+      text: `❌ The command requires a prefix! Use: ${prefix} before your command.`,
+      quick_replies: [
+        {
+          content_type: "text",
+          title: `${prefix}help`,
+          payload: "HELP"
+        }
+      ]
+    });
   }
-}
+};
 
 const listenPostback = async (event, pageAccessToken) => {
   const send = async text => api.sendMessage(senderID, typeof text === "object" ? text : {text}, pageAccessToken),
   senderID = event.sender.id, postbackPayload = event.postback.payload,
   payload = postbackPayload.toLowerCase().trim();
+  
   if (!senderID || !payload) return;
+
   switch (payload) {
     case "get_started": {
       return getStarted(send);
@@ -107,8 +107,7 @@ const listenPostback = async (event, pageAccessToken) => {
     }
     default: {
       const admin = api.admin.some(id => id === senderID);
-      if (payload) {
-      if (api.commands.some(cmd => cmd === payload)) {
+      if (payload && api.commands.some(cmd => cmd === payload)) {
           const commandJs = require(api.cmdLoc + `/${payload}`);
           if (commandJs.admin && !admin) return send("This command is for admins only.");
           await (commandJs.run || (() => {}))({
@@ -117,11 +116,10 @@ const listenPostback = async (event, pageAccessToken) => {
           send,
           admin
         });
-      }
       } else return;
     }
   }
-}
+};
 
 module.exports = async (event, pageAccessToken) => {
   if (event.message) listenMessage(event, pageAccessToken);
