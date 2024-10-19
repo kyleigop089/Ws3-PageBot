@@ -25,8 +25,13 @@ module.exports = {
         trimmedLyrics = lyrics.substring(0, maxLyricsLength) + "...";
       }
 
+      // First send the lyrics
       send({
-        body: `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`,
+        body: `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`
+      });
+
+      // Then send the image (separately)
+      send({
         attachment: {
           type: "image",
           payload: {
