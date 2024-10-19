@@ -4,10 +4,10 @@ const name = "lyrics";
 module.exports = {
   name,
   description: "Get song lyrics by title",
-  async run({ api, send, args }) {
+  async run({ api, sendMessage, args }) {
     const songTitle = args.join(" ");
     
-    if (!songTitle) return send(`Usage: ${api.prefix + name} [song title]`);
+    if (!songTitle) return sendMessage(`Usage: ${api.prefix + name} [song title]`);
 
     try {
       const res = await axios.get(`https://markdevs69v2-679r.onrender.com/api/lyrics/song`, {
@@ -25,10 +25,8 @@ module.exports = {
         trimmedLyrics = lyrics.substring(0, maxLyricsLength) + "...";
       }
 
-      // First send the lyrics
-      send({
-        body: `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`
-      });
+      // First send the lyrics text using sendMessage
+      sendMessage(`🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`);
 
       // Then send the image (separately)
       send({
@@ -41,7 +39,7 @@ module.exports = {
       });
 
     } catch (error) {
-      send("Error retrieving lyrics. Please try again or check your input.\n" + (error.message || error));
+      sendMessage("Error retrieving lyrics. Please try again or check your input.\n" + (error.message || error));
     }
   }
 };
