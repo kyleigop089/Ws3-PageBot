@@ -18,8 +18,15 @@ module.exports = {
 
       const { title, artist, lyrics, url, song_thumbnail } = res.data.content;
 
+      // Trim lyrics if they exceed 2000 characters
+      const maxLyricsLength = 2000;
+      let trimmedLyrics = lyrics;
+      if (lyrics.length > maxLyricsLength) {
+        trimmedLyrics = lyrics.substring(0, maxLyricsLength) + "...";
+      }
+
       send({
-        body: `🎵 *${title}* by *${artist}*\n\n${lyrics}\n\n🔗 Read more: ${url}`,
+        body: `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`,
         attachment: {
           type: "image",
           payload: {
