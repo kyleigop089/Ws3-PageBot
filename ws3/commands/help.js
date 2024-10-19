@@ -16,7 +16,7 @@ module.exports = {
           type: "template",
           payload: {
             template_type: "button",
-            text: `🤖 | These are the commands on Wie AI below.
+            text: `🤖 | These are the commands on CHILLI BOT below.
 🔎 | Click every command to see the usage.`,
             buttons: [
               {
