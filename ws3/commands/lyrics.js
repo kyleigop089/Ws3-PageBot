@@ -25,31 +25,7 @@ module.exports = {
         trimmedLyrics = lyrics.substring(0, maxLyricsLength) + "...";
       }
 
-      // Function to split long lyrics into chunks
-      const splitMessageIntoChunks = (message, chunkSize) => {
-        const chunks = [];
-        for (let i = 0; i < message.length; i += chunkSize) {
-          chunks.push(message.slice(i, i + chunkSize));
-        }
-        return chunks;
-      };
-
-      // Send the lyrics in chunks if necessary
-      const lyricsMessage = `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`;
-      if (lyricsMessage.length > maxLyricsLength) {
-        const messages = splitMessageIntoChunks(lyricsMessage, maxLyricsLength);
-        for (const message of messages) {
-          await send({
-            body: message
-          });
-        }
-      } else {
-        await send({
-          body: lyricsMessage
-        });
-      }
-
-      // Then send the image (separately) if available
+      // Send the image first (if available)
       if (song_thumbnail) {
         await send({
           attachment: {
@@ -60,6 +36,10 @@ module.exports = {
           }
         });
       }
+
+      // Then send the lyrics
+      const lyricsMessage = `🎵 *${title}* by *${artist}*\n\n${trimmedLyrics}\n\n🔗 Read more: ${url}`;
+      await send(lyricsMessage);
 
     } catch (error) {
       send("Error retrieving lyrics. Please try again or check your input.\n" + (error.message || error));
