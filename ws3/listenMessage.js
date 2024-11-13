@@ -15,13 +15,17 @@ const getStarted = async (send) => send({
           },
           {
             type: "postback",
+            title: "About",
+            payload: "ABOUT"
+          },
+          {
+            type: "postback",
             title: "Prefix",
             payload: "PREFIX"
           }
         ]
       }
 }});
-
 const listenMessage = async (event, pageAccessToken) => {
   const senderID = event.sender.id;
   const message = event.message.text;
@@ -38,24 +42,22 @@ const listenMessage = async (event, pageAccessToken) => {
     .split(/\s+/)
     .map(arg => arg.trim()) : [],
     admin = api.admin.some(id => id === senderID);
-
-  switch (message.toLowerCase().trim()) {
+    switch (message.toLowerCase().trim()) {
     case "prefix": {
-      return send(`Hello! My prefix is ${prefix}`);
+      return send(`Hello! I Don't Have a Prefix Master`);
     }
     default: {
       if (!message) return;
-      if (["hi", "wie", "wieai", "wiegine", "get started"]
+      if (["hi", "wie", "wieai", "wiegine", "get started", "Levi", "levi"]
         .some(text => text === message.toLowerCase().trim())) {
          return getStarted(send);
       }
-
-      //command handling
+      //command
       if (message.toLowerCase().startsWith(prefix)) {
         if (api.commands.some(cmd => cmd === command)) {
           const commandJs = require(api.cmdLoc + `/${command}`);
-          if (commandJs.admin && !admin) {
-            return send({
+          if (commandJs.admin && !admin){
+          return send({
               text: `❌ Command ${command} is for admins only. Type or click (below) ${prefix}help to see available commands.`,
               quick_replies: [
                 {
@@ -79,8 +81,9 @@ const listenMessage = async (event, pageAccessToken) => {
             quick_replies: [
               {
                 content_type: "text",
-                title: "!help",
+                title: "/help",
                 payload: "HELP"
+                //"image_url": "http://example.com/img/red.png"
               }
            ]
           });
@@ -88,15 +91,13 @@ const listenMessage = async (event, pageAccessToken) => {
       } else return;
     }
   }
-};
+}
 
 const listenPostback = async (event, pageAccessToken) => {
   const send = async text => api.sendMessage(senderID, typeof text === "object" ? text : {text}, pageAccessToken),
   senderID = event.sender.id, postbackPayload = event.postback.payload,
   payload = postbackPayload.toLowerCase().trim();
-  
   if (!senderID || !payload) return;
-
   switch (payload) {
     case "get_started": {
       return getStarted(send);
@@ -106,7 +107,8 @@ const listenPostback = async (event, pageAccessToken) => {
     }
     default: {
       const admin = api.admin.some(id => id === senderID);
-      if (payload && api.commands.some(cmd => cmd === payload)) {
+      if (payload) {
+      if (api.commands.some(cmd => cmd === payload)) {
           const commandJs = require(api.cmdLoc + `/${payload}`);
           if (commandJs.admin && !admin) return send("This command is for admins only.");
           await (commandJs.run || (() => {}))({
@@ -115,10 +117,11 @@ const listenPostback = async (event, pageAccessToken) => {
           send,
           admin
         });
+      }
       } else return;
     }
   }
-};
+}
 
 module.exports = async (event, pageAccessToken) => {
   if (event.message) listenMessage(event, pageAccessToken);
